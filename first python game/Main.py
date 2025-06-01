@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -13,7 +14,14 @@ player1 = pygame.Rect(200, 350, 64, 64)
 player2 = pygame.Rect(600, 350, 64, 64)
 ball = pygame.Rect(376, 228, 48, 48)
 
+
+ball_speed = 3
+# ball directions
+ball_dx = random.choice([-1, 1])
+ball_dy = random.choice([-1, 1])
+
 movespeed = 5
+
 # Player and ball images
 player_1_img = pygame.image.load("player1.png")
 player_2_img = pygame.image.load("player2.png")
@@ -67,13 +75,33 @@ while running:
     if player2.y > 445:
         player2.y = 445
 
+    # ball moving depending on speed
+    ball.x += ball_dx * ball_speed
+    ball.y += ball_dy * ball_speed
+
+    # if touch top or bottom of screen, reverse direction
+    if ball.y <= 0 or ball.y >= 452:
+        ball_dy *= -1
+
+    # if touch left or right paddle, reverse direction and randomize speed
+    if ball.colliderect(player1) or ball.colliderect(player2):
+        ball_dx *= -1
+        ball_dy = random.choice([-1, 0, 1])
+
+    # if ball goes out of bounds, reset position and randomize direction
+    if ball.x < 0 or ball.x > 752:
+        ball.x = 376
+        ball.y = 228
+        ball_dx = random.choice([-1, 1])
+        ball_dy = random.choice([-1, 1])
+
     # Draw everything
     screen.blit(background_img, (0, 0))
-    screen.blit(player_1_img, (player1.x, player1.y))
-    screen.blit(player_2_img, (player2.x, player2.y))
-    screen.blit(ball_img, (ball.x, ball.y))
+    screen.blit(player_1_img, player1)
+    screen.blit(player_2_img, player2)
+    screen.blit(ball_img, ball)
 
     pygame.display.flip()
-    clock.tick(120)
+    clock.tick(60)
 
 pygame.quit()
