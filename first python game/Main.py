@@ -14,13 +14,12 @@ player1 = pygame.Rect(200, 350, 64, 64)
 player2 = pygame.Rect(600, 350, 64, 64)
 ball = pygame.Rect(376, 228, 48, 48)
 
-
 ball_speed = 3
-# ball directions
 ball_dx = random.choice([-1, 1])
 ball_dy = random.choice([-1, 1])
 
 movespeed = 5
+max_hit = 0
 
 # Player and ball images
 player_1_img = pygame.image.load("player1.png")
@@ -83,10 +82,21 @@ while running:
     if ball.y <= 0 or ball.y >= 452:
         ball_dy *= -1
 
+    # Reset max_hit when ball crosses midpoint (so paddles can hit again)
+    if ball_dx > 0 and ball.x >= 400:
+        max_hit = 0
+    if ball_dx < 0 and ball.x <= 400:
+        max_hit = 0
+
     # if touch left or right paddle, reverse direction and randomize speed
-    if ball.colliderect(player1) or ball.colliderect(player2):
+    if ball.colliderect(player1) and ball_dx < 0 and ball.x <= 335 and max_hit < 1:
         ball_dx *= -1
         ball_dy = random.choice([-1, 0, 1])
+        max_hit += 1
+    if ball.colliderect(player2) and ball_dx > 0 and ball.x >= 402 and max_hit < 1:
+        ball_dx *= -1
+        ball_dy = random.choice([-1, 0, 1])
+        max_hit += 1
 
     # if ball goes out of bounds, reset position and randomize direction
     if ball.x < 0 or ball.x > 752:
@@ -94,6 +104,7 @@ while running:
         ball.y = 228
         ball_dx = random.choice([-1, 1])
         ball_dy = random.choice([-1, 1])
+        max_hit = 0
 
     # Draw everything
     screen.blit(background_img, (0, 0))
