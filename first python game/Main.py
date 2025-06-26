@@ -29,6 +29,10 @@ movespeed = 5  # მოთამაშეების მოძრაობი�
 # მანამ, სანამ ბურთი შუა ხაზს არ გადაკვეთს
 max_hit = 0
 
+# ქულების დასათვლელი ცვლადები
+score1 = 0
+score2 = 0
+
 # მოთამაშეებისა და ბურთის სურათების ჩატვირთვა
 player_1_img = pygame.image.load("player1.png")
 player_2_img = pygame.image.load("player2.png")
@@ -37,14 +41,30 @@ ball_img = pygame.image.load("ball.png")
 # FPS კონტროლისთვის - თამაში 60 ფრეიმს წამში იმუშავებს
 clock = pygame.time.Clock()
 
-font = pygame.font.SysFont("Sylfaen", 20)
+# ტექსტის ჩვენებისთვის
+font = pygame.font.SysFont("Sylfaen", 50)
 start_label = font.render("press SPACE to start", True, (255, 255, 255))
-
-# დაწყების ეკრანის ცვლადი
+# თამაშის დაწყების ცვლადი
 started = False
+running = True
+# თამაშის დაწყების ლოგიკა
+while not started:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            started = True  # ან დააყენე False, თუ გინდა უბრალოდ დაიხუროს
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                started = True
+                running = True
+
+    screen.fill((0, 0, 0))
+    screen.blit(start_label, (200, 250))
+    pygame.display.flip()
 
 # მთავარი თამაშის ციკლი
-running = True
+
 while running:
 
     for event in pygame.event.get():
@@ -52,13 +72,6 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
-
-    while started != True:
-        screen.fill((0, 0, 0))
-        screen.blit(start_label, (330, 250))
-        if keys[pygame.K_SPACE]:
-            started = True
-        pygame.display.flip()
 
     # ===== მოთამაშე 1-ის მართვა (WASD ღილაკები) =====
     if keys[pygame.K_w]:
@@ -146,6 +159,11 @@ while running:
     # ===== ბურთის ეკრნიდან გასვლა ("გოლი") =====
     # თუ ბურთი მარცხენა ან მარჯვენა კიდეს გასცდა
     if ball.x < 0 or ball.x > 752:  # 752 = 800 - 48 (ბურთის სიგანე)
+        # ქულის მისცემა
+        if ball.x > 752:
+            score1 += 1
+        if ball.x < 0:
+            score2 += 1
         # ბურთის ეკრანის ცენტრში დაბრუნება
         ball.x = 376  # ეკრანის ცენტრი (800/2 - 48/2)
         ball.y = 228  # ეკრანის ცენტრი (500/2 - 48/2)
@@ -153,12 +171,15 @@ while running:
         ball_dx = random.choice([-1, 1])
         ball_dy = random.choice([-1, 1])
         max_hit = 0  # ჰიტების მთვლელის განულება ახალი რაუნდისთვის
+    # ქულების საჩვენებლად
+    score_label = font.render(f"{score1} : {score2}", True, (255, 255, 255))
 
     # ===== ყველაფრის ეკრანზე დახატვა =====
     screen.blit(background_img, (0, 0))
     screen.blit(player_1_img, player1)
     screen.blit(player_2_img, player2)
     screen.blit(ball_img, ball)
+    screen.blit(score_label, (356, 50))
 
     # ეკრანის განახლება - ყველა ცვლილების ჩვენება
     pygame.display.flip()
