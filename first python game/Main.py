@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 pygame.init()
 
@@ -9,8 +10,8 @@ pygame.display.set_caption("Ping-Pong")
 background_img = pygame.image.load("background.jpg")
 background_img = pygame.transform.scale(background_img, (800, 500))
 
-player1 = pygame.Rect(200, 350, 64, 64)
-player2 = pygame.Rect(600, 350, 64, 64)
+player1 = pygame.Rect(200, 215, 64, 64)
+player2 = pygame.Rect(600, 215, 64, 64)
 ball = pygame.Rect(376, 228, 48, 48)
 
 # ===== ბურთის მოძრაობის ცვლადები =====
@@ -44,6 +45,8 @@ clock = pygame.time.Clock()
 # ტექსტის ჩვენებისთვის
 font = pygame.font.SysFont("Sylfaen", 50)
 start_label = font.render("press SPACE to start", True, (255, 255, 255))
+player1_winlabel = font.render("Player 1 Wins!", True, (255, 255, 255))
+player2_winlabel = font.render("Player 2 Wins!", True, (255, 255, 255))
 # თამაშის დაწყების ცვლადი
 started = False
 running = True
@@ -60,7 +63,7 @@ while not started:
                 running = True
 
     screen.fill((0, 0, 0))
-    screen.blit(start_label, (200, 250))
+    screen.blit(start_label, (180, 220))
     pygame.display.flip()
 
 # მთავარი თამაშის ციკლი
@@ -180,6 +183,25 @@ while running:
     screen.blit(player_2_img, player2)
     screen.blit(ball_img, ball)
     screen.blit(score_label, (356, 50))
+
+    if score1 >= 10 or score2 >= 10:
+        screen.fill((0, 0, 0))
+        if score1 >= 10:
+            screen.blit(player1_winlabel, (222, 220))
+        if score2 >= 10:
+            screen.blit(player2_winlabel, (222, 220))
+        pygame.display.flip()
+        wait_time = 5
+        start_time = time.time()
+        while time.time() - start_time < 5:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+            if not running:
+                break
+        running = False
+
 
     # ეკრანის განახლება - ყველა ცვლილების ჩვენება
     pygame.display.flip()
