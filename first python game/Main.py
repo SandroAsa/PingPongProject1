@@ -183,7 +183,8 @@ while running:
     screen.blit(player_2_img, player2)
     screen.blit(ball_img, ball)
     screen.blit(score_label, (356, 50))
-
+    
+    # თუ რომელიმე მოთამაშემ 10 ქულა მიიღო, გამარჯვების ეკრანი გამოჩნდება და 5 წამის მერე თამაში გაითიშება
     if score1 >= 10 or score2 >= 10:
         screen.fill((0, 0, 0))
         if score1 >= 10:
